@@ -3,19 +3,24 @@
 #include <vector>
 #include "Eigen/Dense"
 
-class Tools {
+class Tools
+{
 public:
-
-  /**
-  * A helper method to calculate RMSE.
-  */
-  static Eigen::VectorXd CalculateRMSE(const std::vector<Eigen::VectorXd> &estimations, const std::vector<Eigen::VectorXd> &ground_truth);
-
-  /**
-  * A helper method to calculate Jacobians.
-  */
-  static Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
-
+    
+    /**
+     * A helper method to calculate RMSE.
+     */
+    static Eigen::VectorXd CalculateRMSE(const std::vector<Eigen::VectorXd> &estimations, const std::vector<Eigen::VectorXd> &ground_truth);
+    
+    /**
+     * A helper method to calculate Jacobians.
+     */
+    static Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
+    
+    /**
+     * Convert state vector to radar measruements
+     */
+    static Eigen::VectorXd convertStateToRadarMeas(const Eigen::VectorXd& x_state);
 };
 
 #endif /* TOOLS_H_ */

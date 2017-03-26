@@ -3,17 +3,17 @@
 
 #include "Eigen/Dense"
 
-class GroundTruthPackage {
+class GroundTruthPackage
+{
 public:
-  long timestamp_;
-
-  enum SensorType{
-    LASER,
-    RADAR
-  } sensor_type_;
-
-  Eigen::VectorXd gt_values_;
-
+    enum SensorTyp
+    {
+        LASER,
+        RADAR
+    } sensor_type_;
+    
+    Eigen::VectorXd gt_values_;
+    long timestamp_;
 };
 
 #endif /* GROUND_TRUTH_PACKAGE_H_ */
