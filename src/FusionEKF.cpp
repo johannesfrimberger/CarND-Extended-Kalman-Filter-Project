@@ -101,8 +101,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      *  Prediction
      ****************************************************************************/
     
-    cout << "Predict" << std::endl;
-    
     // Compute the time elapsed between the current and previous measurements
     const float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
     previous_timestamp_ = measurement_pack.timestamp_;
@@ -112,8 +110,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     /*****************************************************************************
      *  Update
      ****************************************************************************/
-    
-    cout << "Update" << std::endl;
     
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
@@ -127,6 +123,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     }
     
     // print the output
-    cout << "x_ = " << ekf_.getStateEstimation() << endl;
-    cout << "P_ = " << ekf_.getStateCovarianceMatrix() << endl;
+    //cout << "x_ = " << ekf_.getStateEstimation() << endl;
+    //cout << "P_ = " << ekf_.getStateCovarianceMatrix() << endl;
 }

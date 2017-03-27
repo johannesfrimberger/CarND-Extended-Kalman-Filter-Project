@@ -6,7 +6,8 @@ using Eigen::MatrixXd;
 using std::vector;
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
-                       const vector<VectorXd> &ground_truth){
+                       const vector<VectorXd> &ground_truth)
+{
     
     VectorXd rmse(4);
     rmse << 0,0,0,0;
@@ -15,13 +16,15 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     //  * the estimation vector size should not be zero
     //  * the estimation vector size should equal ground truth vector size
     if(estimations.size() != ground_truth.size()
-       || estimations.size() == 0){
+       || estimations.size() == 0)
+    {
         std::cout << "Invalid estimation or ground_truth data" << std::endl;
         return rmse;
     }
     
     //accumulate squared residuals
-    for(unsigned int i=0; i < estimations.size(); ++i){
+    for(unsigned int i=0; i < estimations.size(); ++i)
+    {
         
         VectorXd residual = estimations[i] - ground_truth[i];
         
@@ -40,9 +43,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     return rmse;
 }
 
-MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
+MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
+{
     
     MatrixXd Hj(3,4);
+    
     //recover state parameters
     const float px = x_state(0);
     const float py = x_state(1);
@@ -55,7 +60,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     const float c3 = (c1*c2);
     
     //check division by zero
-    if(fabs(c1) < 0.0001){
+    if(fabs(c1) < 0.0001)
+    {
         std::cout << "CalculateJacobian () - Error - Division by Zero" << std::endl;
         return Hj;
     }
@@ -72,12 +78,19 @@ VectorXd Tools::convertStateToRadarMeas(const VectorXd& x_state)
 {
     const double min_distance = 1e-4;
     const double distance = sqrt(pow(x_state[0],2) + pow(x_state[1],2));
-    const double safe_distance = (distance < min_distance) ? min_distance : distance;
     
     VectorXd z_pred(3);
-    z_pred << distance,
-        atan2(x_state[1], x_state[0]),
-        (x_state[0] * x_state[2] + x_state[1] * x_state[3]) / safe_distance;
+    if(distance < min_distance)
+    {
+        // Set angle and distance change rate to zero for very small movement
+        z_pred << distance, 0.0, 0.0;
+    }
+    else
+    {
+        z_pred << distance,
+            atan2(x_state[1], x_state[0]),
+            (x_state[0] * x_state[2] + x_state[1] * x_state[3]) / distance;
+    }
     
     return z_pred;
 }

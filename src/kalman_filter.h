@@ -81,7 +81,10 @@ private:
     Eigen::MatrixXd F_;
 
     // measurement matrix
-    Eigen::MatrixXd H_;    
+    Eigen::MatrixXd H_;
+    
+    // identity matrix
+    Eigen::MatrixXd identity_;
 };
 
 #endif /* KALMAN_FILTER_H_ */
