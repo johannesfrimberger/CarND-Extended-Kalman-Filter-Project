@@ -20,10 +20,37 @@ void KalmanFilter::Init_X(Eigen::VectorXd &x_in)
     x_ = x_in;
     
     // Pre calculate identity matrix
+    long x_size = x_.size();
+    identity_ = MatrixXd::Identity(x_size, x_size);
 }
 
 void KalmanFilter::Predict(const float dt)
 {
+    // Only predict if time delta is big enough
+    if( dt > 0.001 )
+    {
+        //Modify the F matrix so that the time is integrated
+        F_(0, 2) = dt;
+        F_(1, 3) = dt;
+        
+        const float dt_2 = dt * dt;
+        const float dt_3 = dt_2 * dt;
+        const float dt_4 = dt_3 * dt;
+        
+        const float noise_ax = 9.0f;
+        const float noise_ay = 9.0f;
+        
+        // process covariance matrix
+        MatrixXd Q = MatrixXd(4, 4);
+        Q <<  dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
+        0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
+        dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
+        0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
+        
+        x_ = F_ * x_;
+        MatrixXd Ft = F_.transpose();
+        P_ = F_ * P_ * Ft + Q;
+    }
 }
 
 void KalmanFilter::Update(const VectorXd &z, const MatrixXd &R)
@@ -32,10 +59,13 @@ void KalmanFilter::Update(const VectorXd &z, const MatrixXd &R)
     VectorXd y = z - z_pred;
     MatrixXd Ht = H_.transpose();
     MatrixXd PHt = P_ * Ht;
+    MatrixXd S = H_ * PHt + R;
+    MatrixXd Si = S.inverse();
     MatrixXd K = PHt * Si;
     
     //new estimate
     x_ = x_ + (K * y);
+    P_ = (identity_ - K * H_) * P_;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z, const MatrixXd &R)
@@ -52,4 +82,5 @@ void KalmanFilter::UpdateEKF(const VectorXd &z, const MatrixXd &R)
     
     //new estimate
     x_ = x_ + (K * y);
+    P_ = (identity_ - K * Hj) * P_;
 }
